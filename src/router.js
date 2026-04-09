@@ -6,7 +6,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/nounoutrice/'), // Ajout du chemin de base
   routes
 })
 
