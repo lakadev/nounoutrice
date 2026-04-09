@@ -3,6 +3,6 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './tests',
   use: {
-    baseURL: 'https://lakadev.github.io/nounoutrice/'
+    baseURL: 'https://lakadev.github.io/nounoutrice/' // URL de prod
   }
 })
