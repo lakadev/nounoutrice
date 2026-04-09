@@ -1,0 +1,17 @@
+services:
+  web:
+    image: nginx:alpine
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+    networks:
+      - traefik-proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nounoutrice.rule=Host(`nounoutrice.${TRAEFIK_HOST}`)
+      - traefik.http.routers.nounoutrice.entrypoints=websecure
+      - traefik.http.routers.nounoutrice.tls.certresolver=letsencrypt
+      - traefik.http.services.nounoutrice.loadbalancer.server.port=80
+
+networks:
+  traefik-proxy:
+    external: true
