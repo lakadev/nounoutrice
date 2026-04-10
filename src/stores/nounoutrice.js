@@ -12,7 +12,7 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
   const anneeComplete = ref(true)
   const semainesIncomplete = ref(47)
 
-  // Calculs avec typage forcé pour éviter les NaN
+  // Calculs avec typage Number forcé pour éviter les NaN
   const totalHeuresSemaine = computed(() => {
     return plages.value.reduce((total, plage) => {
       const diff = Number(plage.max) - Number(plage.min)
@@ -20,6 +20,7 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     }, 0)
   })
 
+  // Autres calculs stabilisés
   const heuresNormales = computed(() => Math.min(totalHeuresSemaine.value, 45))
   const heuresSup = computed(() => Math.max(0, totalHeuresSemaine.value - 45))
   const tarifHeuresSup = computed(() => tarif.value * 1.25)
@@ -36,7 +37,7 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     return ((totalJours * 4 * 52) / 12).toFixed(0)
   })
 
-  const tarifFormated = computed(() => tarif.value.toFixed(2))
+  const tarifFormated = computed(() => Number(tarif.value).toFixed(2))
 
   function addPlage() {
     plages.value.push({ min: 9, max: 16, repetition: 1 })
