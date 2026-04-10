@@ -12,7 +12,12 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
   const anneeComplete = ref(true)
   const semainesIncomplete = ref(47)
 
-  // Calculs avec typage Number forcé pour éviter les NaN
+  // Total jours/semaine (max 6)
+  const totalJours = computed(() => {
+    return plages.value.reduce((sum, p) => sum + Number(p.repetition), 0)
+  })
+
+  // Total heures/semaine
   const totalHeuresSemaine = computed(() => {
     return plages.value.reduce((total, plage) => {
       const diff = Number(plage.max) - Number(plage.min)
@@ -20,21 +25,40 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     }, 0)
   })
 
-  // Autres calculs stabilisés
+  // Répartition heures normales vs heures sup
+  // Heures sup = heures au-delà de 45h/semaine
   const heuresNormales = computed(() => Math.min(totalHeuresSemaine.value, 45))
   const heuresSup = computed(() => Math.max(0, totalHeuresSemaine.value - 45))
+
+  // Tarif heures sup (majoration 25%)
   const tarifHeuresSup = computed(() => tarif.value * 1.25)
 
+  // Majoration deux enfants (50% de plus sur le tarif de base)
+  const coefEnfants = computed(() => deuxEnfants.value ? 1.5 : 1.0)
+
+  // Coût mensuel
+  // ((heures normaux * 52 sem) / 12) * tarif + ((heures sup * 52 sem) / 12) * tarifHS
   const totalMensuel = computed(() => {
     const baseSemaines = anneeComplete.value ? 52 : semainesIncomplete.value
     const hNormMens = (heuresNormales.value * baseSemaines) / 12
     const hSupMens = (heuresSup.value * baseSemaines) / 12
-    return (hNormMens * tarif.value + hSupMens * tarifHeuresSup.value).toFixed(0)
+    const tarifApplique = tarif.value * coefEnfants.value
+    const tarifHSApplique = tarifHeuresSup.value * coefEnfants.value
+    return Math.round(hNormMens * tarifApplique + hSupMens * tarifHSApplique)
   })
 
+  // Heures supplémentaires MENSUELLES (pas hebdomadaires!)
+  const heuresSupMensuelles = computed(() => {
+    const baseSemaines = anneeComplete.value ? 52 : semainesIncomplete.value
+    return Math.round((heuresSup.value * baseSemaines) / 12)
+  })
+
+  // Indemnités mensuelles
   const indemniteMensuelle = computed(() => {
+    // 4.65€ par jour et par enfant (valuegar)
     const totalJours = plages.value.reduce((t, p) => t + Number(p.repetition), 0)
-    return ((totalJours * 4 * 52) / 12).toFixed(0)
+    const valeurJournaliere = deuxEnfants.value ? 4.65 * 2 : 4.65
+    return Math.round((totalJours * 4 * valeurJournaliere * 52) / 12)
   })
 
   const tarifFormated = computed(() => Number(tarif.value).toFixed(2))
@@ -59,7 +83,8 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
 
   return {
     plages, tarif, deuxEnfants, anneeComplete, semainesIncomplete,
-    totalHeuresSemaine, heuresSup, tarifHeuresSup, totalMensuel, 
-    indemniteMensuelle, tarifFormated, addPlage, removePlage, plageRange
+    totalJours, totalHeuresSemaine, heuresSup, heuresSupMensuelles,
+    tarifHeuresSup, coefEnfants, totalMensuel, indemniteMensuelle,
+    tarifFormated, addPlage, removePlage, plageRange
   }
 })
