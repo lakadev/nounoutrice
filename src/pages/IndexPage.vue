@@ -24,7 +24,6 @@
           
           <div class="column items-center">
             <div class="text-subtitle1 text-grey-7 q-mb-xs display-hours">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
-            <!-- Ajout de id pour ciblage Playwright -->
             <q-range
               v-model="store.plages[index]" 
               :min="0"
@@ -36,7 +35,6 @@
               drag-range
               dense
               class="input-time-range"
-              :id="'range-' + index"
             />
              <div class="row justify-between q-mt-sm text-grey-7 text-caption">
               <span>Début</span>
@@ -45,7 +43,6 @@
           </div>
           
           <div class="column items-center">
-            <!-- Rendre le knob interactif pour changer la répétition si besoin, ou le laisser readonly si c'est le design voulu -->
             <q-knob
               v-model="plage.repetition"
               :min="1"
@@ -76,7 +73,7 @@
       <q-card-section class="q-mt-xl q-mb-lg column items-center section-tarif">
         <div class="text-h6 text-grey-8 q-mb-lg">Tarif net</div>
         
-        <!-- Remplacement du SVG statique par un q-knob Quasar natif pour l'interactivité réelle -->
+        <!-- Jauge interactive via q-knob native -->
         <q-knob
           v-model="store.tarif"
           :min="0"
@@ -134,14 +131,12 @@ const store = useNounoutriceStore();
   border-radius: 12px; 
   background-color: #ffffff; 
 }
-
 .q-page {
   background-color: #f5f5f5; 
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
-
 .summary-card {
   border-radius: 10px;
   background-color: #e8f5e9;
