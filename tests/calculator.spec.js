@@ -27,8 +27,8 @@ test.describe('Nounoutrice E2E Tests', () => {
     await page.goto(PROD_URL);
     await page.waitForLoadState('networkidle');
     
-    // Default tarif is 4.00
-    await expect(page.locator('.text-center.text-h5')).toContainText('4.00');
+    // Default tarif is 4.00 - sélecteur précis
+    await expect(page.locator('.display-tarif')).toContainText('4.00');
   });
 
   test('Test 4: Toggles change labels and functionality', async ({ page }) => {

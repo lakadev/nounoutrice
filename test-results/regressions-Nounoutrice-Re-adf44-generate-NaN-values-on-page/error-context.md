@@ -59,27 +59,29 @@ Call log:
         - img [ref=e42]: add
     - generic [ref=e43]:
       - generic [ref=e44]: Tarif net
-      - generic [ref=e45]:
+      - slider [ref=e45] [cursor=pointer]:
         - img [ref=e46]
-        - generic [ref=e49]: 4.00 €/h
-    - generic [ref=e50]:
-      - generic [ref=e51]:
-        - button [ref=e52] [cursor=pointer]:
-          - img [ref=e54]: person
-        - generic [ref=e55]: 1 enfant
-        - switch [ref=e56] [cursor=pointer]
-      - generic [ref=e60]:
-        - button [ref=e61] [cursor=pointer]:
-          - img [ref=e63]: event
-        - generic [ref=e64]: Année complète
-        - switch [checked] [ref=e65] [cursor=pointer]
-    - generic [ref=e69]:
-      - generic [ref=e70]:
+        - generic [ref=e50]:
+          - generic [ref=e51]: "4.00"
+          - generic [ref=e52]: €/h
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - button [ref=e55] [cursor=pointer]:
+          - img [ref=e57]: person
+        - generic [ref=e58]: 1 enfant
+        - switch [ref=e59] [cursor=pointer]
+      - generic [ref=e63]:
+        - button [ref=e64] [cursor=pointer]:
+          - img [ref=e66]: event
+        - generic [ref=e67]: Année complète
+        - switch [checked] [ref=e68] [cursor=pointer]
+    - generic [ref=e72]:
+      - generic [ref=e73]:
         - text: "Total semaine :"
-        - strong [ref=e71]: 35h
-      - generic [ref=e72]: "Tarif net : 4.00 €/h"
-      - generic [ref=e73]: "Coût mensuel : ~607 €/mois"
-      - generic [ref=e74]: + 87€ d'indemnités
+        - strong [ref=e74]: 35h
+      - generic [ref=e75]: "Tarif net : 4.00 €/h"
+      - generic [ref=e76]: "Coût mensuel : ~607 €/mois"
+      - generic [ref=e77]: + 87€ d'indemnités
 ```
 
 # Test source

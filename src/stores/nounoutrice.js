@@ -47,9 +47,19 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     if (plages.value.length > 1) plages.value.splice(index, 1)
   }
 
+  // Retourne un objet reactive {min, max} pour q-range, sans toucher à repetition
+  function plageRange(index) {
+    return {
+      get min() { return plages.value[index].min },
+      set min(v) { plages.value[index].min = Number(v) },
+      get max() { return plages.value[index].max },
+      set max(v) { plages.value[index].max = Number(v) },
+    }
+  }
+
   return {
     plages, tarif, deuxEnfants, anneeComplete, semainesIncomplete,
     totalHeuresSemaine, heuresSup, tarifHeuresSup, totalMensuel, 
-    indemniteMensuelle, tarifFormated, addPlage, removePlage
+    indemniteMensuelle, tarifFormated, addPlage, removePlage, plageRange
   }
 })

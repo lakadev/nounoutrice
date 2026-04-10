@@ -42,15 +42,14 @@ test.describe('Nounoutrice Regressions & Interactions', () => {
   test('Interaction: Clicking on Tarif Gauge should update values', async ({ page }) => {
     const costBefore = await page.locator('.display-total-mensuel').innerText();
     
-    // Clic sur la jauge de tarif
-    const gauge = page.locator('.gauge-container').first();
+    // Clic sur le knob de tarif (bord droit pour augmenter)
+    const gauge = page.locator('.display-tarif-knob');
     const gBox = await gauge.boundingBox();
     if (gBox) {
-      // Cliquer sur le bord droit pour augmenter le tarif
       await page.mouse.click(gBox.x + gBox.width - 5, gBox.y + gBox.height / 2);
     }
 
-    await page.waitForTimeout(500); // Attendre le calcul
+    await page.waitForTimeout(500);
     const costAfter = await page.locator('.display-total-mensuel').innerText();
     
     expect(costAfter).not.toBe(costBefore);

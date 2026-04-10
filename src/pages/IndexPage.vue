@@ -25,13 +25,13 @@
           <div class="column items-center">
             <div class="text-subtitle1 text-grey-7 q-mb-xs display-hours">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
             <q-range
-              v-model="store.plages[index]" 
+              v-model="makePlageRange(index).value"
               :min="0"
               :max="24"
               label-always
               snap
               color="primary"
-              style="width: 200px;" 
+              style="width: 200px;"
               drag-range
               dense
               class="input-time-range"
@@ -51,7 +51,6 @@
               size="90px"
               color="accent"
               track-color="grey-2"
-              readonly
               show-value
               class="q-mb-xs knob-repetition"
             >
@@ -119,8 +118,20 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useNounoutriceStore } from '../stores/nounoutrice';
 const store = useNounoutriceStore();
+
+// Computed writable pour isoler {min, max} de repetition sur chaque plage
+function makePlageRange(index) {
+  return computed({
+    get: () => ({ min: store.plages[index].min, max: store.plages[index].max }),
+    set: (val) => {
+      store.plages[index].min = Number(val.min)
+      store.plages[index].max = Number(val.max)
+    }
+  })
+}
 </script>
 
 <style scoped>
