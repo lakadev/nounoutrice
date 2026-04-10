@@ -78,20 +78,6 @@
             <span v-if="store.totalJours > 6" class="text-negative text-caption q-ml-sm">(max 6 jours !)</span>
           </div>
         </div>
-
-        <!-- Bouton ajouter avec label -->
-        <div class="row items-center justify-center q-mt-md">
-          <q-btn 
-            color="primary" 
-            icon="add" 
-            dense 
-            @click="store.addPlage" 
-            size="md" 
-            class="shadow-1 btn-add-plage"
-            :label="'Ajouter une plage'"
-            flat
-          />
-        </div>
       </q-card-section>
 
       <q-card-section class="q-mb-md column items-center section-tarif">

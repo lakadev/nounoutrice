@@ -57,8 +57,8 @@ test.describe('Nounoutrice E2E Tests', () => {
     await page.goto(PROD_URL);
     await page.waitForLoadState('networkidle');
     
-    // Add a plage
-    await page.locator('.btn-add-plage').click();
+    // Add a plage (use .first() in case of multiple buttons)
+    await page.locator('.btn-add-plage').first().click();
     
     // Check we have 2 plages now
     const plages = await page.locator('.plage-item').count();
