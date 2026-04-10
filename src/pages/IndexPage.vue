@@ -1,12 +1,12 @@
 <template>
-  <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
-    <q-card class="my-card column items-center shadow-3"> 
+  <q-page class="flex column bg-grey-2 no-scroll">
+    <q-card class="my-card column full-height"> 
       
       <q-card-section class="bg-primary text-white text-h5 text-center q-pa-sm full-width app-header">
         Nounoutrice
       </q-card-section>
 
-      <!-- Plages horaires - sans titre -->
+      <!-- Plages horaires - sans bordure -->
       <q-card-section class="full-width section-plages">
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center plage-item">
           
@@ -42,24 +42,26 @@
             />
           </div>
           
-          <!-- Knob répétition aligné verticalement -->
-          <q-knob
-            v-model="plage.repetition"
-            :min="1"
-            :max="maxRepetitionFor(index)"
-            :step="1"
-            size="60px"
-            color="accent"
-            track-color="grey-2"
-            show-value
-            class="knob-repetition"
-          >
-            <div class="absolute-center text-subtitle1 display-repetition">x{{ plage.repetition }}</div>
-          </q-knob>
-          <div class="text-caption text-grey-7 text-center">Jours</div>
+          <!-- Knob répétition avec label dessous -->
+          <div class="column items-center knob-container">
+            <q-knob
+              v-model="plage.repetition"
+              :min="1"
+              :max="maxRepetitionFor(index)"
+              :step="1"
+              size="60px"
+              color="accent"
+              track-color="grey-2"
+              show-value
+              class="knob-repetition"
+            >
+              <div class="absolute-center text-subtitle1 display-repetition">x{{ plage.repetition }}</div>
+            </q-knob>
+            <div class="text-caption text-grey-7">Jours</div>
+          </div>
         </div>
 
-        <!-- Bouton ajouter - style outline Quasar -->
+        <!-- Bouton ajouter -->
         <div class="row items-center justify-center q-mt-xs">
           <q-btn 
             color="primary" 
@@ -158,17 +160,21 @@ function formatTime(h) {
 .my-card {
   width: 100%;
   max-width: 500px;
+  margin: 0 auto;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1); 
   border-radius: 12px; 
   background-color: #ffffff; 
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 .q-page {
-  background-color: #f5f5f5; 
-  padding: 8px;
+  min-height: 100vh;
 }
 .summary-card {
   border-radius: 8px;
   background-color: #e8f5e9;
+  margin-top: auto;
 }
 .section-plages {
   padding: 8px 12px;
@@ -188,7 +194,7 @@ function formatTime(h) {
   min-width: 180px;
   max-width: 240px;
 }
-.knob-repetition {
+.knob-container {
   flex-shrink: 0;
 }
 .total-semaine {
