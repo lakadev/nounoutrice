@@ -12,34 +12,42 @@
         
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-between q-mb-sm plage-item">
           
+          <!-- Bouton supprimer - masqué si une seule plage -->
           <q-btn
+            v-if="store.plages.length > 1"
             round
             color="negative"
             icon="close"
             dense
             @click="store.removePlage(index)"
-            :disable="store.plages.length <= 1"
             size="sm"
             class="shadow-1 btn-remove-plage"
           />
+          <!-- Espaceur quand le bouton est masqué -->
+          <div v-else style="width: 36px;"></div>
           
-          <div class="column items-center q-ml-sm" style="flex: 1;">
-            <div class="text-subtitle2 text-grey-7 q-mb-xs display-hours">{{ formatHours(plage.min) }} - {{ formatHours(plage.max) }}</div>
+          <!-- Zone horaires centrée -->
+          <div class="column items-center plage-time-zone">
+            <!-- Durée en heures -->
+            <div class="text-subtitle2 text-primary display-hours">{{ plage.max - plage.min }}h</div>
             <q-range
               v-model="makePlageRange(index).value"
               :min="0"
               :max="24"
+              :left-label-value="formatTime(plage.min)"
+              :right-label-value="formatTime(plage.max)"
               label-always
               snap
               color="primary"
-              style="width: 100%; max-width: 280px;"
+              style="width: 100%; max-width: 260px;"
               drag-range
               dense
               class="input-time-range"
             />
           </div>
           
-          <div class="column items-center q-ml-sm">
+          <!-- Knob répétition aligné -->
+          <div class="column items-center">
             <q-knob
               v-model="plage.repetition"
               :min="1"
@@ -57,7 +65,7 @@
           </div>
         </div>
 
-        <!-- Bouton ajouter AVANT le séparateur (cohérence) -->
+        <!-- Bouton ajouter avec bordure -->
         <div class="row items-center justify-center q-mt-sm">
           <q-btn 
             color="primary" 
@@ -66,12 +74,12 @@
             @click="store.addPlage" 
             size="sm" 
             class="btn-add-plage"
-            :label="'Ajouter'"
-            flat
+            label="Ajouter"
+            outline
           />
         </div>
 
-        <!-- Total semaine (placé ici, après le bouton) -->
+        <!-- Total semaine -->
         <div class="text-center q-mt-md q-pt-md" style="border-top: 1px solid #e0e0e0;">
           <div class="text-subtitle1 text-grey-8 display-total-semaine">
             Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong>
@@ -147,9 +155,9 @@ function maxRepetitionFor(index) {
   return Math.max(1, 6 - totalOthers)
 }
 
-// Formatage heures
-function formatHours(h) {
-  return h < 10 ? '0' + h + ':00' : h + ':00'
+// Formatage heure HH:00 pour les labels du q-range
+function formatTime(h) {
+  return String(h).padStart(2, '0') + ':00'
 }
 </script>
 
@@ -180,5 +188,13 @@ function formatHours(h) {
 }
 .plage-item {
   padding: 8px 0;
+  align-items: center;
+}
+.plage-time-zone {
+  flex: 1;
+  min-width: 200px;
+}
+.btn-add-plage {
+  border: 1px solid var(--q-primary);
 }
 </style>
