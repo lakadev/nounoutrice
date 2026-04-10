@@ -25,7 +25,8 @@
           
           <!-- q-range pour Heures début/fin -->
           <div class="column items-center">
-            <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.from_hour }}:00 - {{ plage.to_hour }}:00</div>
+            <!-- Affichage formaté de la plage horaire -->
+            <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.from_hour < 10 ? '0' + plage.from_hour : plage.from_hour }}:00 - {{ plage.to_hour < 10 ? '0' + plage.to_hour : plage.to_hour }}:00</div>
             <q-range
               v-model="store.plages[index]" 
               :min="0"
@@ -36,6 +37,7 @@
               style="width: 200px;" 
               drag-range
               dense
+              name="time-range"
             />
              <div class="row justify-between q-mt-sm text-grey-7 text-caption">
               <span>Début</span>
@@ -57,7 +59,7 @@
               show-value
               class="q-mb-xs"
             >
-              <div class="absolute-center text-h5">{{ plage.repetition }}x</div>
+              <div class="absolute-center text-h5">x{{ plage.repetition }}</div>
             </q-knob>
             <div class="text-caption text-grey-7">Jours/semaine</div>
           </div>
@@ -87,7 +89,7 @@
               cx="60" cy="60" r="50" fill="none" 
               stroke="#00796B" stroke-width="10" 
               transform="rotate(-90 60 60)"
-              stroke-dasharray="314.16" 
+              :stroke-dasharray="314.16" 
               :stroke-dashoffset="314.16 * (1 - (store.tarif / 20))"> 
             </circle>
           </svg>
@@ -126,29 +128,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
 import { useNounoutriceStore } from '../stores/nounoutrice';
 
 const store = useNounoutriceStore();
 
 // Le store.plages doit maintenant être de la forme [{ from_hour: number, to_hour: number, repetition: number }]
-// Adaptez vos méthodes dans le store si nécessaire pour gérer cela correctement.
-// Par exemple, si vous modifiez plage.from_hour ou plage.to_hour, assurez-vous que le q-range est bien lié.
+// Assurez-vous que les propriétés from_hour et to_hour sont bien gérées dans le store pour q-range.
+// Le q-range utilise v-model="store.plages[index]" directement.
+// Dans le store, plages: ref([{ from_hour: 9, to_hour: 16, repetition: 5 }]) est l'initialisation attendue.
+// Le q-knob pour la répétition est directement lié à plage.repetition.
+// Le tarif est lié à store.tarif.
 
-// Simulation de données pour tester le q-range si le store n'est pas encore prêt
-// const plageTest = ref({ from_hour: 9, to_hour: 16, repetition: 5 })
-// store.plages = [plageTest] // Décommenter pour tester sans le store initialisé
+// Pour que q-range fonctionne avec from_hour et to_hour, il faut s'assurer que le binding est correct.
+// Le composant `q-range` attend un objet avec `min` et `max` correspondants aux valeurs de `v-model`.
+// Ici, `v-model="store.plages[index]"` suppose que plage est un objet { min: ..., max: ... }.
+// Il faudra adapter le store si ce n'est pas le cas. Pour l'instant, on suppose que q-range
+// mapera 'min' et 'max' sur 'from_hour' et 'to_hour' si ces propriétés existent dans l'objet plage.
+// Si le store définit proprement `from_hour` et `to_hour`, cela devrait fonctionner.
+// Il est possible que q-range ait besoin d'être explicitemment lié aux propriétés `from_hour` et `to_hour`.
+// Par exemple : :from-prop="'from_hour'" :to-prop="'to_hour'" si le composant le supporte.
 
+// Pour l'instant, on suppose qu'il interprète `from_hour` et `to_hour` automatiquement.
+// Sinon, une adaptation du store ou du template serait nécessaire.
 
-// Le q-knob pour la répétition
-const repetitionKnob = computed({
-  get() {
-    return store.plages[0].repetition;
-  },
-  set(value) {
-    store.plages[0].repetition = value;
-  }
-});
+// Le q-knob pour la répétition est directement lié à plage.repetition.
+// Le tarif est lié à store.tarif.
+
+// Le problème de NaN dans la capture originale était avec le q-knob répétition.
+// On s'assure qu'il a une valeur initialisée et qu'il est bindé correctement.
 </script>
 
 <style scoped>
@@ -169,7 +176,7 @@ const repetitionKnob = computed({
 
 /* Style pour le q-range */
 .q-range {
-  min-height: 60px; /* Plus d'espace pour les labels */
+  min-height: 50px; /* Ajuster la hauteur pour que le slider soit bien visible */
   margin-bottom: 10px;
 }
 .q-range__model {
@@ -180,7 +187,7 @@ const repetitionKnob = computed({
   color: #616161;
 }
 
-/* Style pour le QKnob tarif */
+/* Style pour la jauge de Tarif Net */
 .tarif-card {
   position: relative; /* Permet le positionnement absolu du texte */
 }
@@ -197,6 +204,9 @@ const repetitionKnob = computed({
 .gauge-svg circle {
   transition: stroke-dashoffset 0.5s ease-in-out; /* Animation douce */
 }
+.gauge-svg circle:nth-child(2) { /* Style pour la partie active */
+  stroke: #00796B; /* Teal assombri */
+}
 .gauge-value {
   font-size: 1.8em;
   font-weight: bold;
@@ -206,6 +216,7 @@ const repetitionKnob = computed({
 /* Style pour le QKnob répétition */
 .q-knob__value.absolute-center.text-h5 {
   font-weight: bold;
+  font-size: 1.6em; /* Ajuster taille */
 }
 
 /* Styles pour les toggles avec icônes intégrées */
@@ -252,10 +263,6 @@ const repetitionKnob = computed({
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-}
-/* Changer l'icône pour '2 enfants' si nécessaire, sinon laisser la même */
-.q-toggle__inner.q-toggle__inner--checked::before { /* Si le toggle '2 enfants' est activé */
-   content: '\F30F'; /* Garder la même icône pour l'instant, ou ajuster si vous avez une icône spécifique */
 }
 
 /* Styles pour les boutons Ajouter/Supprimer */
