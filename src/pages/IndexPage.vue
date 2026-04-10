@@ -121,6 +121,11 @@
 <script setup>
 import { useNounoutriceStore } from '../stores/nounoutrice';
 const store = useNounoutriceStore();
+
+// Le store.plages est maintenant structuré comme [{ min: number, max: number, repetition: number }]
+// Le q-range est lié à store.plages[index] via v-model. Il utilise min/max pour les heures.
+// Le q-knob est lié à plage.repetition.
+// Assurez-vous que l'initialisation dans le store est correcte (ex: { min: 9, max: 16, repetition: 5 })
 </script>
 
 <style scoped>

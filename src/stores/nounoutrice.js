@@ -20,7 +20,6 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     }, 0)
   })
 
-  // Autres calculs hérités et stabilisés
   const heuresNormales = computed(() => Math.min(totalHeuresSemaine.value, 45))
   const heuresSup = computed(() => Math.max(0, totalHeuresSemaine.value - 45))
   const tarifHeuresSup = computed(() => tarif.value * 1.25)
@@ -37,6 +36,8 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     return ((totalJours * 4 * 52) / 12).toFixed(0)
   })
 
+  const tarifFormated = computed(() => tarif.value.toFixed(2))
+
   function addPlage() {
     plages.value.push({ min: 9, max: 16, repetition: 1 })
   }
@@ -48,6 +49,6 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
   return {
     plages, tarif, deuxEnfants, anneeComplete, semainesIncomplete,
     totalHeuresSemaine, heuresSup, tarifHeuresSup, totalMensuel, 
-    indemniteMensuelle, addPlage, removePlage
+    indemniteMensuelle, tarifFormated, addPlage, removePlage
   }
 })
