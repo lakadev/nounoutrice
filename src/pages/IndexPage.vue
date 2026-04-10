@@ -24,6 +24,7 @@
           
           <div class="column items-center">
             <div class="text-subtitle1 text-grey-7 q-mb-xs display-hours">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
+            <!-- Ajout de id pour ciblage Playwright -->
             <q-range
               v-model="store.plages[index]" 
               :min="0"
@@ -35,6 +36,7 @@
               drag-range
               dense
               class="input-time-range"
+              :id="'range-' + index"
             />
              <div class="row justify-between q-mt-sm text-grey-7 text-caption">
               <span>Début</span>
@@ -43,6 +45,7 @@
           </div>
           
           <div class="column items-center">
+            <!-- Rendre le knob interactif pour changer la répétition si besoin, ou le laisser readonly si c'est le design voulu -->
             <q-knob
               v-model="plage.repetition"
               :min="1"
@@ -51,7 +54,6 @@
               size="90px"
               color="accent"
               track-color="grey-2"
-              readonly
               show-value
               class="q-mb-xs knob-repetition"
             >
@@ -74,41 +76,43 @@
       <q-card-section class="q-mt-xl q-mb-lg column items-center section-tarif">
         <div class="text-h6 text-grey-8 q-mb-lg">Tarif net</div>
         
-        <div class="gauge-container">
-          <svg viewBox="0 0 120 120" class="gauge-svg">
-            <circle cx="60" cy="60" r="50" fill="none" stroke="#e0e0e0" stroke-width="10"></circle>
-            <circle 
-              cx="60" cy="60" r="50" fill="none" 
-              stroke="#00796B" stroke-width="10" 
-              transform="rotate(-90 60 60)"
-              :stroke-dasharray="314.16" 
-              :stroke-dashoffset="314.16 * (1 - (store.tarif / 20))"> 
-            </circle>
-          </svg>
-          <div class="gauge-value absolute-center text-h4 display-tarif">
-             {{ store.tarifFormated }} €/h
+        <!-- Remplacement du SVG statique par un q-knob Quasar natif pour l'interactivité réelle -->
+        <q-knob
+          v-model="store.tarif"
+          :min="0"
+          :max="20"
+          :step="0.1"
+          show-value
+          size="150px"
+          color="teal"
+          track-color="grey-3"
+          class="text-h4 display-tarif-knob"
+        >
+          <div class="column items-center">
+            <span class="display-tarif">{{ store.tarifFormated }}</span>
+            <span class="text-caption">€/h</span>
           </div>
-        </div>
+        </q-knob>
       </q-card-section>
 
       <q-card-section class="row items-center justify-center q-mt-lg q-gutter-lg section-options">
         <div class="row items-center">
           <q-btn unelevated round icon="person" color="grey-7" class="shadow-1 q-mr-sm" />
           <div class="text-subtitle1 label-enfants">{{ store.deuxEnfants ? '2 enfants' : '1 enfant' }}</div>
-          <q-toggle hide-underline v-model="store.deuxEnfants" color="green-5" class="toggle-enfants" />
+          <q-toggle v-model="store.deuxEnfants" color="green-5" class="toggle-enfants" />
         </div>
         <div class="row items-center">
           <q-btn unelevated round icon="event" color="grey-7" class="shadow-1 q-mr-sm" />
           <div class="text-subtitle1 label-annee">{{ store.anneeComplete ? 'Année complète' : 'Année incomplète' }}</div>
-          <q-toggle hide-underline v-model="store.anneeComplete" color="blue-5" class="toggle-annee" />
+          <q-toggle v-model="store.anneeComplete" color="blue-5" class="toggle-annee" />
         </div>
       </q-card-section>
 
       <q-card-section class="bg-green-1 q-mt-xl text-center summary-card full-width">
         <div class="text-h5 q-mb-sm display-total-semaine">Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong></div>
-        <div class="text-h6 q-mb-xs display-tarif-net">Tarif net : {{ store.tarifFormated }} €/h</div>
+        <div class="text-h6 q-mb-xs display-tarif-net-label">Tarif net : {{ store.tarifFormated }} €/h</div>
         <div class="text-h4 q-mb-xs display-total-mensuel">Coût mensuel : ~{{ store.totalMensuel }} €/mois</div>
-        <div class="text-body1 display-heures-sup" v-if="store.heuresSup > 0">
+        <div class="text-body1" v-if="store.heuresSup > 0">
           dont ~{{ store.heuresSup }}h à {{ store.tarifHeuresSup.toFixed(2) }}€/h
         </div>
         <div class="text-body1 q-mb-md display-indemnites">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
@@ -136,94 +140,6 @@ const store = useNounoutriceStore();
   align-items: center;
   justify-content: center;
   padding: 20px;
-}
-
-.q-range {
-  min-height: 50px; 
-  margin-bottom: 10px;
-}
-.q-range__model { 
-  color: #1976D2; 
-}
-.q-range__label {
-  font-size: 0.8em; 
-  color: #616161;
-}
-
-.gauge-container {
-  position: relative;
-  width: 150px; 
-  height: 150px;
-}
-.gauge-svg {
-  width: 100%;
-  height: 100%;
-}
-.gauge-svg circle {
-  transition: stroke-dashoffset 0.5s ease-in-out; 
-}
-.gauge-value {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #00796B; 
-}
-
-.q-knob__value.absolute-center.text-h5 {
-  font-weight: bold;
-  font-size: 1.6em; 
-}
-
-.q-toggle__inner {
-  position: relative;
-  padding-left: 40px; 
-}
-.q-toggle__inner::before { 
-  content: '\F30F'; 
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.q-toggle__inner::after { 
-  content: '\F4CB'; 
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.q-btn--round.shadow-1 {
-  box-shadow: 0 1px 5px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.14), 0 3px 1px rgba(0,0,0,0.12);
-}
-.q-btn--round.q-btn--dense {
-  min-height: 32px;
-  min-width: 32px;
 }
 
 .summary-card {

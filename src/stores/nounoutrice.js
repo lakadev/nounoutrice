@@ -2,43 +2,45 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useNounoutriceStore = defineStore('nounoutrice', () => {
-  // Plage horaire par défaut : min (début), max (fin), repetition (jours/semaine)
-  // Noms de propriétés alignés avec les attentes de q-range et q-knob
+  // Plages horaires: min (début), max (fin), repetition (jours/semaine)
+  // Ces noms sont utilisés par q-range directement via v-model.
   const plages = ref([
-    { min: 9, max: 16, repetition: 5 } 
-  ])
+    { min: 9, max: 16, repetition: 5 } // Initialisation avec des valeurs par défaut
+  ]);
 
-  const tarif = ref(4.00)
-  const deuxEnfants = ref(false)
-  const anneeComplete = ref(true)
-  const semainesIncomplete = ref(47)
+  const tarif = ref(4.00);
+  const deuxEnfants = ref(false); // Ce toggle semble correspondre à un "nombre d'enfants"
+  const anneeComplete = ref(true);
+  const semainesIncomplete = ref(47);
 
   // Calculs
   const totalHeuresSemaine = computed(() => {
     return plages.value.reduce((total, plage) => {
-      // Utilise min et max qui sont maintenant directement bindés par q-range
-      return total + (plage.max - plage.min) * plage.repetition
-    }, 0)
-  })
+      // Utilise min et max pour le calcul des heures
+      return total + (plage.max - plage.min) * plage.repetition;
+    }, 0);
+  });
 
   const heuresNormales = computed(() => {
-    return Math.min(totalHeuresSemaine.value, 45)
-  })
+    return Math.min(totalHeuresSemaine.value, 45);
+  });
 
   const heuresSup = computed(() => {
-    return Math.max(0, totalHeuresSemaine.value - 45)
-  })
+    return Math.max(0, totalHeuresSemaine.value - 45);
+  });
 
   const tarifHeuresSup = computed(() => {
-    return tarif.value * 1.25
-  })
+    return tarif.value * 1.25;
+  });
 
   const totalHeuresMensuel = computed(() => {
     if (anneeComplete.value) {
-      return totalHeuresSemaine.value * 52 / 12
+      // Calcul basé sur 52 semaines par an
+      return totalHeuresSemaine.value * 52 / 12;
     }
-    return totalHeuresSemaine.value * semainesIncomplete.value / 12
-  })
+    // Calcul basé sur le nombre de semaines incomplètes
+    return totalHeuresSemaine.value * semainesIncomplete.value / 12;
+  });
 
   const totalMensuel = computed(() => {
     // Recalcul du coût mensuel en utilisant les heures normales et supp
@@ -51,9 +53,8 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     return (coutNormal + coutSup).toFixed(0);
   });
 
-
   const indemniteMensuelle = computed(() => {
-    // Utiliser la fonction getTotalRepetition() pour le calcul de l'indemnité
+    // Calcul de l'indemnité basé sur le total de répétitions par semaine
     return (getTotalRepetition() * 4 * 52 / 12).toFixed(0);
   });
 
@@ -62,10 +63,7 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
   });
 
   const deuxEnfantsLabel = computed(() => {
-    // Le label pour le toggle d'enfant devrait être mis à jour plus dynamiquement
-    // pour afficher "2 enfants" quand deuxEnfants est vrai.
-    // Pour l'instant, c'est un label statique.
-    return deuxEnfants.value ? '2 enfants' : '1 enfant'; // Ajusté pour plus de clarté
+    return deuxEnfants.value ? '2 enfants' : '1 enfant';
   });
 
   const anneeIncompleteLabel = computed(() => {
@@ -89,9 +87,7 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     }
   }
 
-  // Note: Le q-range dans IndexPage.vue utilise directement v-model="store.plages[index]"
-  // Il lie les curseurs aux propriétés min et max de l'objet plage.
-  // Il n'y a donc pas besoin de updatePlage si q-range gère min/max directement.
+  // La fonction updatePlage n'est plus nécessaire car q-range bind directement min/max et repetition est bindé séparément.
 
   return {
     plages,
