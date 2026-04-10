@@ -1,9 +1,6 @@
 <template>
   <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
-    <!-- La carte principale unique pour un design unifié -->
     <q-card class="my-card column items-center shadow-3"> 
-      
-      <!-- Header de l'application -->
       <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width">
         Nounoutrice
       </q-card-section>
@@ -11,7 +8,7 @@
       <q-card-section class="q-mb-md items-center justify-center">
         <div class="text-h6 text-grey-8 q-mb-lg text-center">Plages horaires</div>
         
-        <!-- Section Plages Horaires avec q-range -->
+        <!-- Section Plages Horaires avec q-range stylisé -->
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
           
           <!-- Bouton Supprimer -->
@@ -132,13 +129,11 @@ import { useNounoutriceStore } from '../stores/nounoutrice';
 
 const store = useNounoutriceStore();
 
-// Adaptation du store pour utiliser 'min' et 'max' pour q-range, et 'repetition' pour q-knob.
-// Le composant q-range est lié à store.plages[index] via v-model.
-// Il devrait automatiquement mapper 'min' et 'max' sur les propriétés correspondantes de l'objet plage du store.
-// Assurez-vous que le store initialise plages avec des valeurs par défaut :
-// plages: ref([{ min: 9, max: 16, repetition: 5 }])
+// Le store.plages est maintenant structuré comme [{ min: number, max: number, repetition: number }]
+// Le q-range utilise v-model="store.plages[index]", il devrait mapper automatiquement 'min' et 'max'
+// Le formatage des heures (ajustement pour 0X:00) est fait dans le template.
 
-// Le q-knob pour la répétition est lié à plage.repetition.
+// Le q-knob de répétition est directement lié à plage.repetition.
 // Le tarif est lié à store.tarif.
 </script>
 
@@ -163,7 +158,7 @@ const store = useNounoutriceStore();
   min-height: 50px; 
   margin-bottom: 10px;
 }
-.q-range__model { /* Ajustement de la couleur des sliders */
+.q-range__model { 
   color: #1976D2; 
 }
 .q-range__label {
@@ -190,6 +185,7 @@ const store = useNounoutriceStore();
 }
 .gauge-svg circle:nth-child(2) { /* Style pour la partie active */
   stroke: #00796B; /* Teal assombri */
+  /* Le stroke-dashoffset sera calculé dynamiquement par Vue */
 }
 .gauge-value {
   font-size: 1.8em;
@@ -208,7 +204,7 @@ const store = useNounoutriceStore();
   position: relative;
   padding-left: 40px; /* Espace pour l'icône */
 }
-.q-toggle__inner::before { /* Icône personne */
+.q-toggle__inner::before { /* Icône personne (\F30F) */
   content: '\F30F'; 
   font-family: 'Material Icons';
   font-weight: normal;
@@ -228,8 +224,7 @@ const store = useNounoutriceStore();
   top: 50%;
   transform: translateY(-50%);
 }
-/* Icône calendrier */
-.q-toggle__inner::after { 
+.q-toggle__inner::after { /* Icône calendrier (\F4CB) */
   content: '\F4CB'; 
   font-family: 'Material Icons';
   font-weight: normal;
@@ -248,6 +243,11 @@ const store = useNounoutriceStore();
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+/* Icône pour '2 enfants' si nécessaire, sinon garder la même */
+.q-toggle__inner.q-toggle__inner--checked::before { /* Si le toggle '2 enfants' est activé */
+   content: '\F30F'; /* Icône par défaut */
 }
 
 /* Styles pour les boutons Ajouter/Supprimer */
