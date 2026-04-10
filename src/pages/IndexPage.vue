@@ -1,7 +1,8 @@
 <template>
   <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
-    <!-- Carte unique pour un design unifié -->
+    <!-- La principale q-card qui contient tout -->
     <q-card class="my-card column items-center shadow-3"> 
+      
       <!-- Header de l'application -->
       <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width">
         Nounoutrice
@@ -13,6 +14,7 @@
         <!-- Section Plages Horaires avec q-range stylisé -->
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
           
+          <!-- Bouton Supprimer -->
           <q-btn
             round
             color="negative"
@@ -122,7 +124,7 @@
         </div>
         <div class="text-body1 q-mb-md">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
       </q-card-section>
-    </div>
+    </q-card>
   </q-page>
 </template>
 
@@ -132,33 +134,29 @@ import { useNounoutriceStore } from '../stores/nounoutrice';
 const store = useNounoutriceStore();
 
 // Le store.plages doit maintenant être de la forme [{ min: number, max: number, repetition: number }]
-// Assurez-vous que les propriétés min et max sont bien gérées dans le store pour q-range.
-// Le q-range utilise v-model="store.plages[index]" directement. Il devrait mapper automatiquement
-// 'min' et 'max' sur les propriétés correspondantes de l'objet plage.
+// La v-model sur q-range est bindée à store.plages[index]. Cela devrait mapper automatiquement
+// 'min' sur from_hour et 'max' sur to_hour si le composant du store est adapté.
+// Sinon, une adaptation dans le store ou une configuration explicite du q-range sera nécessaire.
+// Pour l'instant, on assume que 'min' et 'max' sont bien les clés utilisées par le composant.
+
+// Assurez-vous que le store initialise plages avec des valeurs par défaut pour min, max et repetition.
+// Exemple dans le store: plages: ref([{ min: 9, max: 16, repetition: 5 }])
 
 // Le q-knob pour la répétition est directement lié à plage.repetition.
 // Le tarif est lié à store.tarif.
-
-// Correction du rendu NaN pour le q-knob de répétition :
-// Ajout de 'show-value' pour s'assurer que la valeur est affichée.
-// Le composant q-knob gère l'affichage sous forme de 'x{{valeur}}'.
-// Assurez-vous que store.plages[0].repetition a une valeur par défaut sensible (ex: 5).
-
-// Ajout des icônes Material Design aux toggles dans les styles CSS
-// Note: Pour que les icônes s'affichent, assurez-vous que les polices Material Icons sont correctement chargées.
 </script>
 
 <style scoped>
 .my-card {
   width: 100%;
   max-width: 550px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1); /* Ombre plus douce et prononcée */
-  border-radius: 12px; /* Coins plus arrondis */
-  background-color: #ffffff; /* Fond blanc pour la carte */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1); 
+  border-radius: 12px; 
+  background-color: #ffffff; 
 }
 
 .q-page {
-  background-color: #f5f5f5; /* Fond léger pour la page */
+  background-color: #f5f5f5; 
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -166,33 +164,33 @@ const store = useNounoutriceStore();
 
 /* Style pour le q-range */
 .q-range {
-  min-height: 50px; /* Plus d'espace pour les labels */
+  min-height: 50px; 
   margin-bottom: 10px;
 }
-.q-range__model {
-  color: #1976D2; /* Couleur primaire Quasar */
+.q-range__model { /* Ajustement de la couleur des sliders */
+  color: #1976D2; 
 }
 .q-range__label {
-  font-size: 0.8em; /* Taille plus petite pour les labels */
+  font-size: 0.8em; 
   color: #616161;
 }
 
 /* Style pour la jauge de Tarif Net */
 .tarif-card {
-  position: relative; /* Permet le positionnement absolu du texte */
+  position: relative; 
 }
 .gauge-container {
   position: relative;
-  width: 150px; /* Taille du conteneur */
+  width: 150px; 
   height: 150px;
 }
 .gauge-svg {
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg); /* Démarre la jauge à 12h */
+  transform: rotate(-90deg); 
 }
 .gauge-svg circle {
-  transition: stroke-dashoffset 0.5s ease-in-out; /* Animation douce */
+  transition: stroke-dashoffset 0.5s ease-in-out; 
 }
 .gauge-svg circle:nth-child(2) { /* Style pour la partie active */
   stroke: #00796B; /* Teal assombri */
@@ -200,13 +198,13 @@ const store = useNounoutriceStore();
 .gauge-value {
   font-size: 1.8em;
   font-weight: bold;
-  color: #00796B; /* Couleur teal assombrie */
+  color: #00796B; 
 }
 
-/* Style pour le QKnob répétition */
+/* Style pour le QKnob répétition (x5) */
 .q-knob__value.absolute-center.text-h5 {
   font-weight: bold;
-  font-size: 1.6em; /* Ajuster taille */
+  font-size: 1.6em; 
 }
 
 /* Styles pour les toggles avec icônes intégrées */
@@ -234,12 +232,8 @@ const store = useNounoutriceStore();
   top: 50%;
   transform: translateY(-50%);
 }
-/* La gestion de l'icône pour '2 enfants' nécessite une logique dans le store ou le template */
-/* Pour l'instant, on garde la même icône par défaut */
-.q-toggle__inner.q-toggle__inner--checked::before { /* Si le toggle '2 enfants' est activé */
-  content: '\F30F'; /* Icône par défaut, à ajuster si vous avez une icône spécifique pour '2 enfants' */
-}
-.q-toggle__inner::after { /* Icône calendrier */
+/* Icône calendrier */
+.q-toggle__inner::after { 
   content: '\F4CB'; 
   font-family: 'Material Icons';
   font-weight: normal;
