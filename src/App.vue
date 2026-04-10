@@ -1,11 +1,6 @@
 <template>
+  <!-- Un seul layout, pas de header ici car IndexPage a le sien pour coller à l'original -->
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>Nounoutrice</q-toolbar-title>
-      </q-toolbar>
-    </q-header>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -13,5 +8,4 @@
 </template>
 
 <script setup>
-// Main layout
 </script>
