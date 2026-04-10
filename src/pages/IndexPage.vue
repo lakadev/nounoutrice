@@ -57,7 +57,21 @@
           </div>
         </div>
 
-        <!-- Total semaine (placé ici, après les plages) -->
+        <!-- Bouton ajouter AVANT le séparateur (cohérence) -->
+        <div class="row items-center justify-center q-mt-sm">
+          <q-btn 
+            color="primary" 
+            icon="add" 
+            dense 
+            @click="store.addPlage" 
+            size="sm" 
+            class="btn-add-plage"
+            :label="'+ Ajouter'"
+            flat
+          />
+        </div>
+
+        <!-- Total semaine (placé ici, après le bouton) -->
         <div class="text-center q-mt-md q-pt-md" style="border-top: 1px solid #e0e0e0;">
           <div class="text-subtitle1 text-grey-8 display-total-semaine">
             Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong>
