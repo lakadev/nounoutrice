@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useNounoutriceStore = defineStore('nounoutrice', () => {
-  // Structure stable pour q-range : { min, max }
+  // Structure stable pour q-range : min, max
   const plages = ref([
     { min: 9, max: 16, repetition: 5 } 
   ])
@@ -12,26 +12,23 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
   const anneeComplete = ref(true)
   const semainesIncomplete = ref(47)
 
+  // Calculs avec typage forcé pour éviter les NaN
   const totalHeuresSemaine = computed(() => {
     return plages.value.reduce((total, plage) => {
-      // Sécurité : forcer le type Number pour éviter NaN lors des drags
       const diff = Number(plage.max) - Number(plage.min)
       return total + (diff * Number(plage.repetition))
     }, 0)
   })
 
+  // Autres calculs hérités et stabilisés
   const heuresNormales = computed(() => Math.min(totalHeuresSemaine.value, 45))
   const heuresSup = computed(() => Math.max(0, totalHeuresSemaine.value - 45))
   const tarifHeuresSup = computed(() => tarif.value * 1.25)
 
-  const totalHeuresMensuel = computed(() => {
-    const base = anneeComplete.value ? 52 : semainesIncomplete.value
-    return (totalHeuresSemaine.value * base) / 12
-  })
-
   const totalMensuel = computed(() => {
-    const hNormMens = (heuresNormales.value * (anneeComplete.value ? 52 : semainesIncomplete.value)) / 12
-    const hSupMens = (heuresSup.value * (anneeComplete.value ? 52 : semainesIncomplete.value)) / 12
+    const baseSemaines = anneeComplete.value ? 52 : semainesIncomplete.value
+    const hNormMens = (heuresNormales.value * baseSemaines) / 12
+    const hSupMens = (heuresSup.value * baseSemaines) / 12
     return (hNormMens * tarif.value + hSupMens * tarifHeuresSup.value).toFixed(0)
   })
 

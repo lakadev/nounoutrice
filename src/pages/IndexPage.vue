@@ -131,90 +131,12 @@ const store = useNounoutriceStore();
   border-radius: 12px; 
   background-color: #ffffff; 
 }
-
 .q-page {
   background-color: #f5f5f5; 
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
-
-.q-range {
-  min-height: 50px; 
-  margin-bottom: 10px;
-}
-.q-range__model { 
-  color: #1976D2; 
-}
-.q-range__label {
-  font-size: 0.8em; 
-  color: #616161;
-}
-
-.tarif-card {
-  position: relative; 
-}
-.gauge-container {
-  position: relative;
-  width: 150px; 
-  height: 150px;
-}
-.gauge-svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg); 
-}
-.gauge-svg circle {
-  transition: stroke-dashoffset 0.5s ease-in-out; 
-}
-.gauge-svg circle:nth-child(2) { 
-  stroke: #00796B; 
-}
-.gauge-value {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #00796B; 
-}
-
-.q-knob__value.absolute-center.text-h5 {
-  font-weight: bold;
-  font-size: 1.6em; 
-}
-
-.q-toggle__inner {
-  position: relative;
-  padding-left: 40px; 
-}
-.q-toggle__inner::before { 
-  content: '\F30F'; 
-  font-family: 'Material Icons';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 24px;
-}
-.q-toggle__inner::after { 
-  content: '\F4CB'; 
-  font-family: 'Material Icons';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 24px;
-}
-.q-toggle__inner.q-toggle__inner--checked::before { 
-   content: '\F30F'; 
-}
-
-.q-btn--round.shadow-1 {
-  box-shadow: 0 1px 5px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.14), 0 3px 1px rgba(0,0,0,0.12);
-}
-.q-btn--round.q-btn--dense {
-  min-height: 32px;
-  min-width: 32px;
-}
-
 .summary-card {
   border-radius: 10px;
   background-color: #e8f5e9;
