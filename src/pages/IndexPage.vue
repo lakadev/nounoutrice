@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
-    <!-- La principale q-card qui contient tout -->
+    <!-- La carte principale unique pour un design unifié -->
     <q-card class="my-card column items-center shadow-3"> 
       
       <!-- Header de l'application -->
@@ -11,7 +11,7 @@
       <q-card-section class="q-mb-md items-center justify-center">
         <div class="text-h6 text-grey-8 q-mb-lg text-center">Plages horaires</div>
         
-        <!-- Section Plages Horaires avec q-range stylisé -->
+        <!-- Section Plages Horaires avec q-range -->
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
           
           <!-- Bouton Supprimer -->
@@ -26,9 +26,8 @@
             class="shadow-1"
           />
           
-          <!-- q-range pour Heures début/fin -->
+          <!-- q-range pour Heures début/fin (bindé sur min/max) -->
           <div class="column items-center">
-            <!-- Affichage formaté de la plage horaire -->
             <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
             <q-range
               v-model="store.plages[index]" 
@@ -133,16 +132,13 @@ import { useNounoutriceStore } from '../stores/nounoutrice';
 
 const store = useNounoutriceStore();
 
-// Le store.plages doit maintenant être de la forme [{ min: number, max: number, repetition: number }]
-// La v-model sur q-range est bindée à store.plages[index]. Cela devrait mapper automatiquement
-// 'min' sur from_hour et 'max' sur to_hour si le composant du store est adapté.
-// Sinon, une adaptation dans le store ou une configuration explicite du q-range sera nécessaire.
-// Pour l'instant, on assume que 'min' et 'max' sont bien les clés utilisées par le composant.
+// Adaptation du store pour utiliser 'min' et 'max' pour q-range, et 'repetition' pour q-knob.
+// Le composant q-range est lié à store.plages[index] via v-model.
+// Il devrait automatiquement mapper 'min' et 'max' sur les propriétés correspondantes de l'objet plage du store.
+// Assurez-vous que le store initialise plages avec des valeurs par défaut :
+// plages: ref([{ min: 9, max: 16, repetition: 5 }])
 
-// Assurez-vous que le store initialise plages avec des valeurs par défaut pour min, max et repetition.
-// Exemple dans le store: plages: ref([{ min: 9, max: 16, repetition: 5 }])
-
-// Le q-knob pour la répétition est directement lié à plage.repetition.
+// Le q-knob pour la répétition est lié à plage.repetition.
 // Le tarif est lié à store.tarif.
 </script>
 

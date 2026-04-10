@@ -1,6 +1,6 @@
 <template>
-  <!-- Un seul layout, pas de header ici car IndexPage a le sien pour coller à l'original -->
   <q-layout view="hHh lpR fFf">
+    <!-- Le q-layout global est conservé, mais le header sera géré UNIQUEMENT par IndexPage.vue -->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -8,4 +8,5 @@
 </template>
 
 <script setup>
+// Ce fichier App.vue ne gère PAS le header. Le header est DANS IndexPage.vue.
 </script>
