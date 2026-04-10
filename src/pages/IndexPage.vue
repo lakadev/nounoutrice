@@ -1,17 +1,16 @@
 <template>
   <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
     <q-card class="my-card column items-center shadow-3"> 
-      <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width">
+      
+      <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width app-header">
         Nounoutrice
       </q-card-section>
 
-      <q-card-section class="q-mb-md items-center justify-center">
+      <q-card-section class="q-mb-md items-center justify-center section-plages">
         <div class="text-h6 text-grey-8 q-mb-lg text-center">Plages horaires</div>
         
-        <!-- Section Plages Horaires avec q-range stylisé -->
-        <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
+        <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg plage-item">
           
-          <!-- Bouton Supprimer -->
           <q-btn
             round
             color="negative"
@@ -20,12 +19,11 @@
             @click="store.removePlage(index)"
             :disable="store.plages.length <= 1"
             size="sm"
-            class="shadow-1"
+            class="shadow-1 btn-remove-plage"
           />
           
-          <!-- q-range pour Heures début/fin (bindé sur min/max) -->
           <div class="column items-center">
-            <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
+            <div class="text-subtitle1 text-grey-7 q-mb-xs display-hours">{{ plage.min < 10 ? '0' + plage.min : plage.min }}:00 - {{ plage.max < 10 ? '0' + plage.max : plage.max }}:00</div>
             <q-range
               v-model="store.plages[index]" 
               :min="0"
@@ -36,7 +34,7 @@
               style="width: 200px;" 
               drag-range
               dense
-              name="time-range"
+              class="input-time-range"
             />
              <div class="row justify-between q-mt-sm text-grey-7 text-caption">
               <span>Début</span>
@@ -44,7 +42,6 @@
             </div>
           </div>
           
-          <!-- q-knob pour Jours/semaine (Répétition) -->
           <div class="column items-center">
             <q-knob
               v-model="plage.repetition"
@@ -56,15 +53,14 @@
               track-color="grey-2"
               readonly
               show-value
-              class="q-mb-xs"
+              class="q-mb-xs knob-repetition"
             >
-              <div class="absolute-center text-h5">x{{ plage.repetition }}</div>
+              <div class="absolute-center text-h5 display-repetition">x{{ plage.repetition }}</div>
             </q-knob>
             <div class="text-caption text-grey-7">Jours/semaine</div>
           </div>
         </div>
         
-        <!-- Bouton Ajouter Plage -->
         <q-btn 
           round 
           color="primary" 
@@ -72,11 +68,10 @@
           dense 
           @click="store.addPlage" 
           size="md" 
-          class="q-mt-lg shadow-1" />
+          class="q-mt-lg shadow-1 btn-add-plage" />
       </q-card-section>
 
-      <!-- Tarif net (avec Jauge Semi-Circulaire stylisée) -->
-      <q-card-section class="q-mt-xl q-mb-lg column items-center tarif-card">
+      <q-card-section class="q-mt-xl q-mb-lg column items-center section-tarif">
         <div class="text-h6 text-grey-8 q-mb-lg">Tarif net</div>
         
         <div class="gauge-container">
@@ -90,35 +85,33 @@
               :stroke-dashoffset="314.16 * (1 - (store.tarif / 20))"> 
             </circle>
           </svg>
-          <div class="gauge-value absolute-center text-h4">
+          <div class="gauge-value absolute-center text-h4 display-tarif">
              {{ store.tarifFormated }} €/h
           </div>
         </div>
       </q-card-section>
 
-      <!-- Options (Enfants/Année) -->
-      <q-card-section class="row items-center justify-center q-mt-lg q-gutter-lg">
+      <q-card-section class="row items-center justify-center q-mt-lg q-gutter-lg section-options">
         <div class="row items-center">
           <q-btn unelevated round icon="person" color="grey-7" class="shadow-1 q-mr-sm" />
-          <div class="text-subtitle1">1 enfant</div>
-          <q-toggle hide-underline v-model="store.deuxEnfants" color="green-5" />
+          <div class="text-subtitle1 label-enfants">{{ store.deuxEnfants ? '2 enfants' : '1 enfant' }}</div>
+          <q-toggle hide-underline v-model="store.deuxEnfants" color="green-5" class="toggle-enfants" />
         </div>
         <div class="row items-center">
           <q-btn unelevated round icon="event" color="grey-7" class="shadow-1 q-mr-sm" />
-          <div class="text-subtitle1">Année complète</div>
-          <q-toggle hide-underline v-model="store.anneeComplete" color="blue-5" />
+          <div class="text-subtitle1 label-annee">{{ store.anneeComplete ? 'Année complète' : 'Année incomplète' }}</div>
+          <q-toggle hide-underline v-model="store.anneeComplete" color="blue-5" class="toggle-annee" />
         </div>
       </q-card-section>
 
-      <!-- Résultats -->
       <q-card-section class="bg-green-1 q-mt-xl text-center summary-card full-width">
-        <div class="text-h5 q-mb-sm">Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong></div>
-        <div class="text-h6 q-mb-xs">Tarif net : {{ store.tarifFormated }} €/h</div>
-        <div class="text-h4 q-mb-xs">Coût mensuel : ~{{ store.totalMensuel }} €/mois</div>
-        <div class="text-body1" v-if="store.heuresSup > 0">
+        <div class="text-h5 q-mb-sm display-total-semaine">Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong></div>
+        <div class="text-h6 q-mb-xs display-tarif-net">Tarif net : {{ store.tarifFormated }} €/h</div>
+        <div class="text-h4 q-mb-xs display-total-mensuel">Coût mensuel : ~{{ store.totalMensuel }} €/mois</div>
+        <div class="text-body1 display-heures-sup" v-if="store.heuresSup > 0">
           dont ~{{ store.heuresSup }}h à {{ store.tarifHeuresSup.toFixed(2) }}€/h
         </div>
-        <div class="text-body1 q-mb-md">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
+        <div class="text-body1 q-mb-md display-indemnites">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
       </q-card-section>
     </q-card>
   </q-page>
@@ -126,15 +119,7 @@
 
 <script setup>
 import { useNounoutriceStore } from '../stores/nounoutrice';
-
 const store = useNounoutriceStore();
-
-// Le store.plages est maintenant structuré comme [{ min: number, max: number, repetition: number }]
-// Le q-range utilise v-model="store.plages[index]", il devrait mapper automatiquement 'min' et 'max'
-// Le formatage des heures (ajustement pour 0X:00) est fait dans le template.
-
-// Le q-knob de répétition est directement lié à plage.repetition.
-// Le tarif est lié à store.tarif.
 </script>
 
 <style scoped>
@@ -153,7 +138,6 @@ const store = useNounoutriceStore();
   padding: 20px;
 }
 
-/* Style pour le q-range */
 .q-range {
   min-height: 50px; 
   margin-bottom: 10px;
@@ -166,10 +150,6 @@ const store = useNounoutriceStore();
   color: #616161;
 }
 
-/* Style pour la jauge de Tarif Net */
-.tarif-card {
-  position: relative; 
-}
 .gauge-container {
   position: relative;
   width: 150px; 
@@ -178,14 +158,9 @@ const store = useNounoutriceStore();
 .gauge-svg {
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg); 
 }
 .gauge-svg circle {
   transition: stroke-dashoffset 0.5s ease-in-out; 
-}
-.gauge-svg circle:nth-child(2) { /* Style pour la partie active */
-  stroke: #00796B; /* Teal assombri */
-  /* Le stroke-dashoffset sera calculé dynamiquement par Vue */
 }
 .gauge-value {
   font-size: 1.8em;
@@ -193,18 +168,16 @@ const store = useNounoutriceStore();
   color: #00796B; 
 }
 
-/* Style pour le QKnob répétition (x5) */
 .q-knob__value.absolute-center.text-h5 {
   font-weight: bold;
   font-size: 1.6em; 
 }
 
-/* Styles pour les toggles avec icônes intégrées */
 .q-toggle__inner {
   position: relative;
-  padding-left: 40px; /* Espace pour l'icône */
+  padding-left: 40px; 
 }
-.q-toggle__inner::before { /* Icône personne (\F30F) */
+.q-toggle__inner::before { 
   content: '\F30F'; 
   font-family: 'Material Icons';
   font-weight: normal;
@@ -224,7 +197,7 @@ const store = useNounoutriceStore();
   top: 50%;
   transform: translateY(-50%);
 }
-.q-toggle__inner::after { /* Icône calendrier (\F4CB) */
+.q-toggle__inner::after { 
   content: '\F4CB'; 
   font-family: 'Material Icons';
   font-weight: normal;
@@ -245,12 +218,6 @@ const store = useNounoutriceStore();
   transform: translateY(-50%);
 }
 
-/* Icône pour '2 enfants' si nécessaire, sinon garder la même */
-.q-toggle__inner.q-toggle__inner--checked::before { /* Si le toggle '2 enfants' est activé */
-   content: '\F30F'; /* Icône par défaut */
-}
-
-/* Styles pour les boutons Ajouter/Supprimer */
 .q-btn--round.shadow-1 {
   box-shadow: 0 1px 5px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.14), 0 3px 1px rgba(0,0,0,0.12);
 }
