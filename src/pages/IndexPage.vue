@@ -66,7 +66,7 @@
             @click="store.addPlage" 
             size="sm" 
             class="btn-add-plage"
-            :label="'+ Ajouter'"
+            :label="'Ajouter'"
             flat
           />
         </div>
