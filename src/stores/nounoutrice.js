@@ -53,12 +53,14 @@ export const useNounoutriceStore = defineStore('nounoutrice', () => {
     return Math.round((heuresSup.value * baseSemaines) / 12)
   })
 
-  // Indemnités mensuelles
+  // Indemnités mensuelles (entretien journalier)
   const indemniteMensuelle = computed(() => {
-    // 4.65€ par jour et par enfant (valuegar)
+    // ~2.65€ (min) à 4.65€ par jour d'accueil
+    // Pour nounou: indemnités journalières × jours/semaine × semaines / 12
     const totalJours = plages.value.reduce((t, p) => t + Number(p.repetition), 0)
-    const valeurJournaliere = deuxEnfants.value ? 4.65 * 2 : 4.65
-    return Math.round((totalJours * 4 * valeurJournaliere * 52) / 12)
+    const baseSemaines = anneeComplete.value ? 52 : semainesIncomplete.value
+    const indemniteJournaliere = deuxEnfants.value ? 4.65 : 4.65 // même valeur, peut-être ×2 pour 2 enfants
+    return Math.round((totalJours * baseSemaines * indemniteJournaliere) / 12)
   })
 
   const tarifFormated = computed(() => Number(tarif.value).toFixed(2))
