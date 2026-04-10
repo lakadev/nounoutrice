@@ -1,12 +1,12 @@
 <template>
-  <q-page class="flex column bg-grey-2 no-scroll">
+  <q-page class="flex column bg-grey-2 no-scroll" style="height: 100dvh;">
     <q-card class="my-card column full-height"> 
       
       <q-card-section class="bg-primary text-white text-h5 text-center q-pa-sm full-width app-header">
         Nounoutrice
       </q-card-section>
 
-      <!-- Plages horaires - sans bordure -->
+      <!-- Plages horaires -->
       <q-card-section class="full-width section-plages">
         <div v-for="(plage, index) in store.plages" :key="index" class="row items-center plage-item">
           
@@ -24,9 +24,8 @@
           <!-- Espaceur quand le bouton est masqué -->
           <div v-else class="spacer-remove"></div>
           
-          <!-- Zone horaires centrée -->
+          <!-- Zone horaires centrée - durée sous la barre -->
           <div class="plage-time-zone">
-            <div class="text-subtitle2 text-primary text-center display-hours">{{ plage.max - plage.min }}h</div>
             <q-range
               v-model="makePlageRange(index).value"
               :min="0"
@@ -40,6 +39,7 @@
               dense
               class="input-time-range"
             />
+            <div class="text-subtitle2 text-primary text-center q-mt-xs display-hours">{{ plage.max - plage.min }}h</div>
           </div>
           
           <!-- Knob répétition avec label dessous -->
@@ -164,12 +164,13 @@ function formatTime(h) {
   box-shadow: 0 4px 16px rgba(0,0,0,0.1); 
   border-radius: 12px; 
   background-color: #ffffff; 
-  min-height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 .q-page {
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 .summary-card {
   border-radius: 8px;
