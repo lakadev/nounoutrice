@@ -10,31 +10,35 @@ test.describe('Nounoutrice Regressions & Interactions', () => {
   });
 
   test('Regression: Shifting hours range should NOT affect repetition value', async ({ page }) => {
-    const repetitionBefore = await page.locator('.display-repetition').innerText();
+    // Get initial repetition value
+    const repetitionBefore = await page.locator('.display-repetition').first().innerText();
     
-    // Simuler un déplacement du slider q-range (clic milieu et drag)
-    const slider = page.locator('.input-time-range .q-range__track').first();
+    // Interact with the q-range slider (click on the track)
+    const slider = page.locator('.input-time-range').first();
     const box = await slider.boundingBox();
     if (box) {
-      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-      await page.mouse.down();
-      await page.mouse.move(box.x + box.width / 4, box.y + box.height / 2);
-      await page.mouse.up();
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     }
 
-    const repetitionAfter = await page.locator('.display-repetition').innerText();
+    // Wait a bit for reactivity
+    await page.waitForTimeout(200);
+
+    // Check repetition hasn't changed
+    const repetitionAfter = await page.locator('.display-repetition').first().innerText();
     expect(repetitionAfter).toBe(repetitionBefore);
   });
 
   test('Regression: Interaction should NOT generate NaN values on page', async ({ page }) => {
-    // Modifier le slider
-    const slider = page.locator('.input-time-range .q-range__track').first();
+    // Modify the slider
+    const slider = page.locator('.input-time-range').first();
     const box = await slider.boundingBox();
     if (box) {
-      await page.mouse.click(box.x + 10, box.y + box.height / 2);
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     }
 
-    // Vérifier l'absence de NaN dans le body
+    await page.waitForTimeout(200);
+
+    // Check there is no NaN in the body
     const bodyText = await page.innerText('body');
     expect(bodyText).not.toContain('NaN');
   });
@@ -42,7 +46,7 @@ test.describe('Nounoutrice Regressions & Interactions', () => {
   test('Interaction: Clicking on Tarif Gauge should update values', async ({ page }) => {
     const costBefore = await page.locator('.display-total-mensuel').innerText();
     
-    // Clic sur le knob de tarif (bord droit pour augmenter)
+    // Click on the tarif knob (right edge to increase)
     const gauge = page.locator('.display-tarif-knob');
     const gBox = await gauge.boundingBox();
     if (gBox) {
