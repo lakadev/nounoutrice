@@ -1,129 +1,133 @@
 <template>
   <q-page class="flex flex-center items-center justify-center bg-grey-2"> 
-    <q-card class="my-card column items-center shadow-3"> 
-      <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width">
-        Nounoutrice
-      </q-card-section>
+    <!-- Suppression de la q-card externe pour éviter le double en-tête -->
+    <div class="column items-center justify-center">
+      
+      <q-card class="my-card column items-center shadow-3"> 
+        <q-card-section class="bg-primary text-white text-h5 text-center q-pa-md q-mb-lg full-width">
+          Nounoutrice
+        </q-card-section>
 
-      <q-card-section class="q-mb-md items-center justify-center">
-        <div class="text-h6 text-grey-8 q-mb-lg text-center">Plages horaires</div>
-        
-        <!-- Section Plages Horaires avec q-range stylisé -->
-        <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
+        <q-card-section class="q-mb-md items-center justify-center">
+          <div class="text-h6 text-grey-8 q-mb-lg text-center">Plages horaires</div>
           
-          <!-- Bouton Supprimer -->
-          <q-btn
-            round
-            color="negative"
-            icon="close"
-            dense
-            @click="store.removePlage(index)"
-            :disable="store.plages.length <= 1"
-            size="sm"
-            class="shadow-1"
-          />
-          
-          <!-- q-range pour Heures début/fin -->
-          <div class="column items-center">
-            <!-- Affichage formaté de la plage horaire -->
-            <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.from_hour < 10 ? '0' + plage.from_hour : plage.from_hour }}:00 - {{ plage.to_hour < 10 ? '0' + plage.to_hour : plage.to_hour }}:00</div>
-            <q-range
-              v-model="store.plages[index]" 
-              :min="0"
-              :max="24"
-              label-always
-              snap
-              color="primary"
-              style="width: 200px;" 
-              drag-range
+          <!-- Section Plages Horaires avec q-range stylisé -->
+          <div v-for="(plage, index) in store.plages" :key="index" class="row items-center justify-center q-gutter-md q-mb-lg">
+            
+            <!-- Bouton Supprimer -->
+            <q-btn
+              round
+              color="negative"
+              icon="close"
               dense
-              name="time-range"
+              @click="store.removePlage(index)"
+              :disable="store.plages.length <= 1"
+              size="sm"
+              class="shadow-1"
             />
-             <div class="row justify-between q-mt-sm text-grey-7 text-caption">
-              <span>Début</span>
-              <span>Fin</span>
+            
+            <!-- q-range pour Heures début/fin -->
+            <div class="column items-center">
+              <!-- Affichage formaté de la plage horaire -->
+              <div class="text-subtitle1 text-grey-7 q-mb-xs">{{ plage.from_hour < 10 ? '0' + plage.from_hour : plage.from_hour }}:00 - {{ plage.to_hour < 10 ? '0' + plage.to_hour : plage.to_hour }}:00</div>
+              <q-range
+                v-model="store.plages[index]" 
+                :min="0"
+                :max="24"
+                label-always
+                snap
+                color="primary"
+                style="width: 200px;" 
+                drag-range
+                dense
+                name="time-range"
+              />
+               <div class="row justify-between q-mt-sm text-grey-7 text-caption">
+                <span>Début</span>
+                <span>Fin</span>
+              </div>
+            </div>
+            
+            <!-- q-knob pour Jours/semaine (Répétition) -->
+            <div class="column items-center">
+              <q-knob
+                v-model="plage.repetition"
+                :min="1"
+                :max="7"
+                :step="1"
+                size="90px"
+                color="accent"
+                track-color="grey-2"
+                readonly
+                show-value
+                class="q-mb-xs"
+              >
+                <div class="absolute-center text-h5">x{{ plage.repetition }}</div>
+              </q-knob>
+              <div class="text-caption text-grey-7">Jours/semaine</div>
             </div>
           </div>
           
-          <!-- q-knob pour Jours/semaine (Répétition) -->
-          <div class="column items-center">
-            <q-knob
-              v-model="plage.repetition"
-              :min="1"
-              :max="7"
-              :step="1"
-              size="90px"
-              color="accent"
-              track-color="grey-2"
-              readonly
-              show-value
-              class="q-mb-xs"
-            >
-              <div class="absolute-center text-h5">x{{ plage.repetition }}</div>
-            </q-knob>
-            <div class="text-caption text-grey-7">Jours/semaine</div>
+          <!-- Bouton Ajouter Plage -->
+          <q-btn 
+            round 
+            color="primary" 
+            icon="add" 
+            dense 
+            @click="store.addPlage" 
+            size="md" 
+            class="q-mt-lg shadow-1" />
+        </q-card-section>
+
+        <!-- Tarif net (avec Jauge Semi-Circulaire stylisée) -->
+        <q-card-section class="q-mt-xl q-mb-lg column items-center tarif-card">
+          <div class="text-h6 text-grey-8 q-mb-lg">Tarif net</div>
+          
+          <div class="gauge-container">
+            <svg viewBox="0 0 120 120" class="gauge-svg">
+              <!-- Fond du cercle -->
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#e0e0e0" stroke-width="10"></circle>
+              <!-- Partie active de la jauge -->
+              <circle 
+                cx="60" cy="60" r="50" fill="none" 
+                stroke="#00796B" stroke-width="10" 
+                transform="rotate(-90 60 60)"
+                :stroke-dasharray="314.16" 
+                :stroke-dashoffset="314.16 * (1 - (store.tarif / 20))"> 
+              </circle>
+            </svg>
+            <div class="gauge-value absolute-center text-h4">
+               {{ store.tarifFormated }} €/h
+            </div>
           </div>
-        </div>
-        
-        <!-- Bouton Ajouter Plage -->
-        <q-btn 
-          round 
-          color="primary" 
-          icon="add" 
-          dense 
-          @click="store.addPlage" 
-          size="md" 
-          class="q-mt-lg shadow-1" />
-      </q-card-section>
+        </q-card-section>
 
-      <!-- Tarif net (avec Jauge Semi-Circulaire stylisée) -->
-      <q-card-section class="q-mt-xl q-mb-lg column items-center tarif-card">
-        <div class="text-h6 text-grey-8 q-mb-lg">Tarif net</div>
-        
-        <div class="gauge-container">
-          <svg viewBox="0 0 120 120" class="gauge-svg">
-            <!-- Fond du cercle -->
-            <circle cx="60" cy="60" r="50" fill="none" stroke="#e0e0e0" stroke-width="10"></circle>
-            <!-- Partie active de la jauge -->
-            <circle 
-              cx="60" cy="60" r="50" fill="none" 
-              stroke="#00796B" stroke-width="10" 
-              transform="rotate(-90 60 60)"
-              :stroke-dasharray="314.16" 
-              :stroke-dashoffset="314.16 * (1 - (store.tarif / 20))"> 
-            </circle>
-          </svg>
-          <div class="gauge-value absolute-center text-h4">
-             {{ store.tarifFormated }} €/h
+        <!-- Options (Enfants/Année) -->
+        <q-card-section class="row items-center justify-center q-mt-lg q-gutter-lg">
+          <div class="row items-center">
+            <q-btn unelevated round icon="person" color="grey-7" class="shadow-1 q-mr-sm" />
+            <div class="text-subtitle1">1 enfant</div>
+            <q-toggle hide-underline v-model="store.deuxEnfants" color="green-5" />
           </div>
-        </div>
-      </q-card-section>
+          <div class="row items-center">
+            <q-btn unelevated round icon="event" color="grey-7" class="shadow-1 q-mr-sm" />
+            <div class="text-subtitle1">Année complète</div>
+            <q-toggle hide-underline v-model="store.anneeComplete" color="blue-5" />
+          </div>
+        </q-card-section>
 
-      <!-- Options (Enfants/Année) -->
-      <q-card-section class="row items-center justify-center q-mt-lg q-gutter-lg">
-        <div class="row items-center">
-          <q-btn unelevated round icon="person" color="grey-7" class="shadow-1 q-mr-sm" />
-          <div class="text-subtitle1">1 enfant</div>
-          <q-toggle hide-underline v-model="store.deuxEnfants" color="green-5" />
-        </div>
-        <div class="row items-center">
-          <q-btn unelevated round icon="event" color="grey-7" class="shadow-1 q-mr-sm" />
-          <div class="text-subtitle1">Année complète</div>
-          <q-toggle hide-underline v-model="store.anneeComplete" color="blue-5" />
-        </div>
-      </q-card-section>
-
-      <!-- Résultats -->
-      <q-card-section class="bg-green-1 q-mt-xl text-center summary-card full-width">
-        <div class="text-h5 q-mb-sm">Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong></div>
-        <div class="text-h6 q-mb-xs">Tarif net : {{ store.tarifFormated }} €/h</div>
-        <div class="text-h4 q-mb-xs">Coût mensuel : ~{{ store.totalMensuel }} €/mois</div>
-        <div class="text-body1" v-if="store.heuresSup > 0">
-          dont ~{{ store.heuresSup }}h à {{ store.tarifHeuresSup.toFixed(2) }}€/h
-        </div>
-        <div class="text-body1 q-mb-md">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
-      </q-card-section>
-    </q-card>
+        <!-- Résultats -->
+        <q-card-section class="bg-green-1 q-mt-xl text-center summary-card full-width">
+          <div class="text-h5 q-mb-sm">Total semaine : <strong>{{ store.totalHeuresSemaine }}h</strong></div>
+          <div class="text-h6 q-mb-xs">Tarif net : {{ store.tarifFormated }} €/h</div>
+          <div class="text-h4 q-mb-xs">Coût mensuel : ~{{ store.totalMensuel }} €/mois</div>
+          <div class="text-body1" v-if="store.heuresSup > 0">
+            dont ~{{ store.heuresSup }}h à {{ store.tarifHeuresSup.toFixed(2) }}€/h
+          </div>
+          <div class="text-body1 q-mb-md">+ {{ store.indemniteMensuelle }}€ d'indemnités</div>
+        </q-card-section>
+      </div>
+    </q-page>
   </q-page>
 </template>
 
@@ -134,28 +138,19 @@ const store = useNounoutriceStore();
 
 // Le store.plages doit maintenant être de la forme [{ from_hour: number, to_hour: number, repetition: number }]
 // Assurez-vous que les propriétés from_hour et to_hour sont bien gérées dans le store pour q-range.
-// Le q-range utilise v-model="store.plages[index]" directement.
-// Dans le store, plages: ref([{ from_hour: 9, to_hour: 16, repetition: 5 }]) est l'initialisation attendue.
-// Le q-knob pour la répétition est directement lié à plage.repetition.
-// Le tarif est lié à store.tarif.
-
-// Pour que q-range fonctionne avec from_hour et to_hour, il faut s'assurer que le binding est correct.
-// Le composant `q-range` attend un objet avec `min` et `max` correspondants aux valeurs de `v-model`.
-// Ici, `v-model="store.plages[index]"` suppose que plage est un objet { min: ..., max: ... }.
-// Il faudra adapter le store si ce n'est pas le cas. Pour l'instant, on suppose que q-range
-// mapera 'min' et 'max' sur 'from_hour' et 'to_hour' si ces propriétés existent dans l'objet plage.
-// Si le store définit proprement `from_hour` et `to_hour`, cela devrait fonctionner.
-// Il est possible que q-range ait besoin d'être explicitemment lié aux propriétés `from_hour` et `to_hour`.
-// Par exemple : :from-prop="'from_hour'" :to-prop="'to_hour'" si le composant le supporte.
-
-// Pour l'instant, on suppose qu'il interprète `from_hour` et `to_hour` automatiquement.
-// Sinon, une adaptation du store ou du template serait nécessaire.
+// Le composant q-range est directement lié à store.plages[index] via v-model. Il devrait mapper automatiquement
+// 'from_hour' sur min (début) et 'to_hour' sur max (fin).
 
 // Le q-knob pour la répétition est directement lié à plage.repetition.
 // Le tarif est lié à store.tarif.
 
-// Le problème de NaN dans la capture originale était avec le q-knob répétition.
-// On s'assure qu'il a une valeur initialisée et qu'il est bindé correctement.
+// Correction du rendu NaN pour le q-knob de répétition
+// Assurez-vous que store.plages[0].repetition a une valeur par défaut sensible (ex: 5).
+
+// Ajout des icônes Material Design aux toggles
+// Note: Pour que les icônes '\F30F' et '\F4CB' s'affichent, vous devez avoir inclus les polices Material Icons.
+// Assurez-vous que 'quasar/src/css/index.sass' ou une autre partie de votre build importe bien Material Icons.
+// Dans le store, assurez-vous que store.plages[0].repetition est initialisé (ex: 5).
 </script>
 
 <style scoped>
@@ -176,7 +171,7 @@ const store = useNounoutriceStore();
 
 /* Style pour le q-range */
 .q-range {
-  min-height: 50px; /* Ajuster la hauteur pour que le slider soit bien visible */
+  min-height: 50px; /* Plus d'espace pour les labels */
   margin-bottom: 10px;
 }
 .q-range__model {
@@ -243,6 +238,11 @@ const store = useNounoutriceStore();
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
+}
+/* La gestion de l'icône pour '2 enfants' nécessite une logique dans le store ou le template */
+/* Pour l'instant, on garde la même icône par défaut */
+.q-toggle__inner.q-toggle__inner--checked::before { /* Si le toggle '2 enfants' est activé */
+  content: '\F30F'; /* Icône par défaut, à ajuster si vous avez une icône spécifique pour '2 enfants' */
 }
 .q-toggle__inner::after { /* Icône calendrier */
   content: '\F4CB'; 
