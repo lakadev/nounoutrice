@@ -7,6 +7,39 @@
 **Childcare rate calculator**
 - Stack: Vue 3 + Quasar, Pinia, Vite, Playwright
 - Deploy: GitHub Pages (`/nounoutrice/`)
+- Repo: `https://github.com/lakadev/nounoutrice.git`
+
+---
+
+## Available Tools
+
+### ✅ Playwright (npm)
+Works for E2E tests and screenshots:```bash
+cd /data/.openclaw/workspace/dev/nounoutrice/source
+npx playwright test
+npx playwright screenshot --viewport-size=390,844 "https://example.com" /tmp/screenshot.png
+```
+
+### ✅ Crawl4AI
+Installed and ready for web scraping:
+```bash
+/data/.local/bin/crwl crawl "https://example.com" -o markdown
+```
+Options:
+- `-o markdown` → markdown output
+- `-o json` → structured output
+- `-c "key=value"` → crawler parameters
+- `--deep-crawl bfs|dfs` → crawl multiple pages
+
+### ❌ Browser Tool OpenClaw
+**Does NOT work** on this system (CDP timeout). Use Playwright or Crawl4AI instead.
+
+### ✅ OpenRouter Models
+Configured in `/data/.openclaw/openclaw.json`:
+- `openrouter/auto` → OpenRouter (Auto)
+- `anthropic/claude-sonnet-4.6` → Claude Sonnet 4.6
+- `anthropic/claude-opus-4.6` → Claude Opus 4.6
+- `anthropic/claude-haiku-4.5` → Claude Haiku 4.5
 
 ---
 
@@ -68,6 +101,19 @@
 
 ---
 
+## Nounoutrice Logic
+
+### Calculation Formulas
+- **Heures sup mensuelles**: `((max - min) * 4.33)` + `((repetition - 1) * (max - min) * 4.33 / 2)`
+- **Indemnités**: `(tarif * heuresSup * 1.5)` — beware: NO extra `* 4`
+- ** deuxEnfants**: Apply coefficient `×1.5`
+
+### Repetition Limit
+- Max **6 days** per time slot
+- Use: `maxRepetitionFor(index)` function
+
+---
+
 ## Quick Reference
 
 | Issue | Solution |
@@ -78,3 +124,4 @@
 | Test selector fails | Use `.display-*` classes |
 | Duplicate header | Check App.vue + IndexPage.vue |
 | toFixed NaN | Guard with `Number()?.toFixed()` |
+| Indemnités wrong | Check: no extra `* 4` factor |
